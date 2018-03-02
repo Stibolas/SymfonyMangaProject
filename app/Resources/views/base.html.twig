@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link href="{{ asset('bundles/app/css/main.css') }}" rel="stylesheet" type="text/css"/>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <h1>MMCollection</h1>
+                <ul>
+                    <li><a href="{{ path('myMangaList') }}">Ma Collection</a></li>
+                    <li>
+                        <div id="search">
+                            <form action="{{ path('searchList') }}" method="POST">
+                                <input name="searchinput" type="text" />
+                                <input type="submit" id="searchButton" value="Rechercher..."/>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <div class="content">
+        {% block body %}{% endblock %}
+        </div>
+        <script
+                src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{% block title %}Ma Collection{% endblock %}
+{% block body %}
+    {% if collections %}
+        {% for Collection in collections %}
+            <div class="collectionManga">
+                Titre : {{ Collection.title }}<br/>
+                Auteur(s) : {{ Collection.authors }}<br/>
+                Nombre de Volume(s) : {{ Collection.count }}<br/>
+                Année de parution : {{ Collection.year }}<br/>
+                <ul id="mangasList">
+                {% for Manga in mangas %}
+                    {% if Manga.collection == Collection %}
+                        <li class="mangaItem">
+                            <img src="{{ Manga.pictureFront }}" />
+                            <div class="hoverManga">
+                                <span>
+                                    <span>Volume <span class="volumeManga">{{ Manga.volumeNumber }}</span></span>
+                                    <button class="deleteMangas" data-id="{{ Manga.id }}">Supprimer</button>
+                                </span>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Vous n'avez pas de manga dans votre collection</p>
+    {% endif %}
+    <div style="display: none;" id="hidden-content">
+        <br/>
+        <p></p>
+    </div>
+    <a data-fancybox data-src="#hidden-content" href="javascript:;" id="fancyTrigger" style="opacity:0;"></a>
+    <input type="hidden" id="url" value="{{ path('delete-manga') }}"/>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+    <script>
+        $('li').on('click', '.deleteMangas', function(){
+            var mangaId = $(this).data('id');
+            var buttonEl = $(this);
+            var collecEl = buttonEl.parent().parent().parent().parent().parent();
+            $.ajax ({
+                url: $("#url").val(),
+                data: {
+                    mangaId : mangaId,
+                },
+                type: "post",
+                async: false,
+                success: function (data, satut)
+                {
+                    buttonEl.parent().parent().parent().remove();
+                    if(data === "OKCollec"){
+                        console.log("deleteCollec")
+                        collecEl.remove();
+                    }
+                    $('#hidden-content p').html('Le Manga a bien été supprimé de votre collection')
+                    $('#fancyTrigger').trigger('click');
+                },
+                error : function(resultat, statut, erreur){
+                    console.log(erreur);
+                }
+            });
+        });
+
+    </script>
+
+{% endblock %}

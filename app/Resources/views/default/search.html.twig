@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recherche de Collections{% endblock %}
+{% block body %}
+    <p>Collections trouvés :</p>
+    <ul class='collections'>
+    {% for mangas in list.Results %}
+        <li><a href="{{ path('searchMangaList', {"id" : mangas[0]}) }}">
+                {{ mangas[1] }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+{% endblock %}

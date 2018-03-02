@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recherche - Liste des Mangas{% endblock %}
+{% block body %}
+    <input type="hidden" id="muid" value="{{ list['Muid'] }}"/>
+    <input type="hidden" id="url" value="{{ path('ajax-add') }}"/>
+    Titre : <span id="titleManga">{{ list['Title'] }}</span><br/>
+    Auteur(s) :<span id="authorsManga">
+    {% for Author in list['Authors'] %}
+        {{ Author }}
+    {% endfor %}</span><br/>
+    Nombre de volumes : <span id="numberManga">{{ list['CountMangas'] }}</span><br/>
+    Début de parution : <span id="yearManga">{{ list['Year'] }}</span><br/>
+
+    Mangas Disponibles :<br/>
+    <ul id="mangasList">
+    {% for Cover in list['Covers'] %}
+      <li><img src="{{ Cover.Thumbnail }}" />
+          <div class="hoverManga">
+              <span>
+                  <span>Volume <span class="volumeManga">{{ Cover.Volume }}</span></span>
+                  <button class="addMangas">Ajouter</button>
+              </span>
+          </div>
+      </li>
+    {% endfor %}
+    </ul>
+    <div style="display: none;" id="hidden-content">
+        <br/>
+        <p></p>
+    </div>
+    <a data-fancybox data-src="#hidden-content" href="javascript:;" id="fancyTrigger" style="opacity:0;"></a>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+    <script>
+        $('li').on('click', '.addMangas', function(){
+            var collectionTitle = $('#titleManga').html();
+            var collectionMuid = $('#muid').val();
+            var collectionAuthors = $('#authorsManga').html();
+            var collectionCount = $('#numberManga').html();
+            var collectionYear = $('#yearManga').html();
+            var mangaImg = $(this).parent().parent().siblings('img').prop('src');
+            var mangaVolume = $(this).siblings('span').find('.volumeManga').html();
+
+            console.log(collectionTitle+" "+collectionMuid+" "+collectionAuthors+" "+collectionCount+" "+collectionYear+" "+mangaImg+" "+mangaVolume);
+            $.ajax ({
+                url: $("#url").val(),
+                data: {
+                    collectionTitle : collectionTitle,
+                    collectionMuid : collectionMuid,
+                    collectionAuthors : collectionAuthors,
+                    collectionCount : collectionCount,
+                    collectionYear : collectionYear,
+                    mangaImg : mangaImg,
+                    mangaVolume : mangaVolume
+                },
+                type: "post",
+                async: false,
+                success: function (data, satut)
+                {
+                    console.log(data);
+                    if(data == "OK") {
+                        $('#hidden-content p').html('Le Manga a bien été ajouté a votre collection')
+                        $('#fancyTrigger').trigger('click');
+                    } else {
+                        $('#hidden-content p').html('Le Manga est déjà dans votre collection')
+                        $('#fancyTrigger').trigger('click');
+                    }
+                },
+                error : function(resultat, statut, erreur){
+                    console.log(erreur);
+                }
+            });
+        });
+
+    </script>
+
+{% endblock %}
